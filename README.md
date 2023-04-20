@@ -9,6 +9,7 @@
 2. Issue, MilStone 관리 철저히 할 것.
 3. Git Commit Message 규칙 잘 지킬 것.
 4. Commit Message 의 형식은 아래와 같음.
+5. Pull Request 요청으로 히스토리 남길 것.
 
 ```
 {어떤 작업 인지에 대한 큰 제목}
