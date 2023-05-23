@@ -43,11 +43,15 @@
                     <h1 class="contact_text">Join</h1>
                     <div class="contact_main">
                         <div class="mail_section">
-                        	<form th:action="user_save" th:method="POST">
-	                        	<input type="Name" class="mail_text" placeholder="Name" name="namve">
-	                            <input type="Name" class="mail_text" placeholder="Email" name="email">
-	                            <input type="Name" class="mail_text" placeholder="Password" name="password">
-                        	</form>
+                        	<form th:action="@{/user/save}" th:method="POST">
+	                        	<input class="mail_text" placeholder="Name" name="name">
+	                            <input class="mail_text" placeholder="Email" name="email">
+	                            <input type="password" class="mail_text" placeholder="Password" name="pw">
+	                            <input class="mail_text" placeholder="telecom" name="telecom">
+	                            <input class="mail_text" placeholder="phone" name="phone">
+	                            <button class="mail_text">저장</button>
+                            </form>
+                        	<a data-th-href="@{/}"><button class="mail_text" >홈으로</button></a>
                         </div>
                     </div>
                 </div>

@@ -42,11 +42,13 @@
                 <div class="col-md-6">
                     <h1 class="contact_text">Login</h1>
                     <div class="contact_main">
-                        <div class="mail_section">
-                            <input type="Name" class="mail_text" placeholder="Name" name="Name">
-                            <input type="Name" class="mail_text" placeholder="Email" name="Email">
-                            <input type="Name" class="mail_text" placeholder="Password" name="Password">
-                        </div>
+                    	<form th:action="@{/login}", th:method="POST">
+	                        <div class="mail_section">
+	                            <input type="Name" class="mail_text" placeholder="Email" name="email">
+	                            <input type="Password" class="mail_text" placeholder="Password" name="pw">
+	                        </div>
+	                        <input type="submit" class="mail_text" value="Sign In"/>
+                        </form>
                         <div>
                         	<button class="mail_text" th:onclick="|location.href='@{/join}'|" th:text="회원가입"></button>
                         </div>
