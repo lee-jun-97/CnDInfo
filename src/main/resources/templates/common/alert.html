@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<th:block th:if="${#strings.length(params.message) != 0}">
+		<script>
+			top.alert("[[${params.message}]]");
+		</script>
+	</th:block>
+	<th:block th:if="${#strings.length(params.redirectUrl) != 0}">
+		<script>
+			top.location.href = '[[${params.redirectUrl}]]';
+		</script>
+	</th:block>
+</head>
+</html>
