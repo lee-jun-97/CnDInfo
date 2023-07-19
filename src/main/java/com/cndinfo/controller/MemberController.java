@@ -4,34 +4,38 @@ import java.sql.SQLDataException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.cndinfo.domain.Alert;
-import com.cndinfo.domain.User;
-import com.cndinfo.service.UserService;
+import com.cndinfo.domain.Member;
+import com.cndinfo.service.MemberService;
 import com.cndinfo.util.DateUtil;
 
 @Controller
-public class UserController {
+public class MemberController {
 	
-	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+	private static final Logger logger = LoggerFactory.getLogger(MemberController.class);
 	
-	UserService userService;
-	DateUtil dateUtil;
+	private MemberService memberService;
+	private DateUtil dateUtil;
+	private BCryptPasswordEncoder pwEncoder;
 	
-	public UserController(UserService userService, DateUtil dateUtil) {
-		this.userService = userService;
+	
+	public MemberController(MemberService memberService, DateUtil dateUtil, BCryptPasswordEncoder pwEncoder) {
+		this.memberService = memberService;
 		this.dateUtil = dateUtil;
+		this.pwEncoder = pwEncoder;
 	}
 	
 	@PostMapping("/user/save")
-	public String userSave(String name, String email, String pw, String telecom, String phone_number, Model model) {
+	public String memberSave(String name, String email, String pw, String telecom, String phone, Model model) {
 		String message = "";
 		String url = "";
 		try {
-			userService.userSave(new User(name, email, pw, telecom, phone_number, dateUtil.createDate(), null, "USER", "N'"));
+			memberService.memberSave(new Member(name, email, pwEncoder.encode(pw), telecom, phone, dateUtil.createDate(), null, "ROLE_USER"));
 			logger.info("회원 정보 저장 완료");
 			message = "회원 가입이 완료되었습니다.";
 			url = "/";

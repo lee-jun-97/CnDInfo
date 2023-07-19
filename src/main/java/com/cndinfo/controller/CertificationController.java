@@ -23,14 +23,14 @@ public class CertificationController {
 		this.smsRepo = smsRepo;
 	}
 	
-	@GetMapping("/req_certification")
+	@GetMapping("/certi/req")
 	public String reqCerti(String telecom, String phone, Model model) {
-		String code = String.valueOf((int)(Math.random() * 899999) + 100000);
+//		String code = String.valueOf((int)(Math.random() * 899999) + 100000);
 		model.addAttribute("params", new Alert("인증번호를 입력해주세요", "/"));
 		return "common/certiAlert";
 	}
 	
-	@GetMapping("/check_certification")
+	@GetMapping("/certi/check")
 	public void checkCerti(String phone, String code) {
 		System.out.println(certiService.checkCertificationNumber(phone, code));
 	}
