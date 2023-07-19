@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th = "http://www.thymeleaf.org">
+<html xmlns:th = "http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">>
 	<body>
 		<div th:fragment="header">
 			<nav class="navbar navbar-expand-lg navbar-light bg-light container-fluid">
@@ -18,12 +18,12 @@
 		            <li class="nav-item">
 		              <a class="nav-link" href="/services">SERVICES</a>
 		            </li>
-		            <!--<li class="nav-item">
-		              <a class="nav-link" href="/">WEB</a>
-		            </li>-->
-		            <!--<li class="nav-item">
-		              <a class="nav-link" href="/">ELEMENTS</a>
-		            </li>-->
+		            <li class="nav-item">
+		              <a class="nav-link" href="/coupon">COUPON</a>
+		            </li>
+		            <li class="nav-item">
+		              <a class="nav-link" href="/discount">DISCOUNT</a>
+		            </li>
 		            <!--<li class="nav-item">
 		              <a class="nav-link" href="/contact">LOGIN</a>
 		            </li>-->
@@ -31,9 +31,13 @@
 		              <a class="nav-link" href="#"><img src="images/search-icon.png"></a>
 		            </li>-->
 		            <li class="nav-item">
-		            	<a class="nav-link" href="/login"><img src="images/user-icon.jpg" width="50px" height="50px"></a>
+		            	<a class="nav-link" sec:authorize="isAnonymous()" href="/login"> 로그인</a>
 		            </li>
-		          </ul>
+		            <li class="nav-item">
+		            	<a class="nav-link" sec:authorize="isAuthenticated()" href="/mypage"> 마이 페이지</a>
+		            </li>
+			            
+
 		        </div>
 		    </nav>
 		</div>

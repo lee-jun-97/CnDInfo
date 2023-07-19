@@ -44,6 +44,7 @@
                     <div class="contact_main">
                     	<form th:action="@{/login}", th:method="POST">
 	                        <div class="mail_section">
+	                    		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
 	                            <input type="Name" class="mail_text" placeholder="Email" name="email">
 	                            <input type="Password" class="mail_text" placeholder="Password" name="pw">
 	                        </div>
@@ -76,16 +77,16 @@
 	</div>
 	<!--copyright section end -->
 	 <!-- Javascript files-->
-    <script src="js/jquery.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/jquery-3.0.0.min.js"></script>
-    <script src="js/plugin.js"></script>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/popper.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/jquery-3.0.0.min.js"></script>
+    <script src="/js/plugin.js"></script>
     <!-- sidebar -->
-    <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
-    <script src="js/custom.js"></script>
+    <script src="/js/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="/js/custom.js"></script>
     <!-- javascript --> 
-    <script src="js/owl.carousel.js"></script>
+    <script src="/js/owl.carousel.js"></script>
     <script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
     <script>
     $(document).ready(function(){})
