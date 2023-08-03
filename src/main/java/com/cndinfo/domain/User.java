@@ -11,12 +11,17 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.Setter;
 
-@Entity
 @Getter
-@Table(name = "members")
-public class Member implements UserDetails {
+@Setter
+@Entity
+@Table(name = "users")
+public class User implements UserDetails {
 	
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 1L;
 	
 	@Id
@@ -29,12 +34,12 @@ public class Member implements UserDetails {
 	public String dead_date = null;
 	public String role;
 	public String iscerti;
-
-	public Member() {
+	
+	public User() {
 		
 	}
 	
-	public Member(String name, String email, String pw, String telecom, String phone, String join_date,
+	public User(String name, String email, String pw, String telecom, String phone, String join_date,
 			String dead_date, String role) {
 		this.name = name;
 		this.email = email;
@@ -48,9 +53,9 @@ public class Member implements UserDetails {
 	}
 	
 	public String toString() {
-		return "Member : [ " + this.getEmail() + ", " + this.getPassword() + " ]"; 
+		return "Member : [ " + this.getEmail() + ", " + this.getPw() + " ]"; 
 	}
-
+	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		ArrayList<GrantedAuthority> auth = new ArrayList<>();
@@ -61,12 +66,12 @@ public class Member implements UserDetails {
 
 	@Override
 	public String getPassword() {
-		return this.pw;
+		return this.getPw();
 	}
 
 	@Override
 	public String getUsername() {
-		return this.email;
+		return this.getEmail();
 	}
 
 	@Override
