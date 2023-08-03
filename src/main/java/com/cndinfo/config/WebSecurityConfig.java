@@ -26,13 +26,17 @@ public class WebSecurityConfig {
 				.requestMatchers("/", "/join", "/loginForm", "/about").permitAll()
 				.requestMatchers("/css/**", "/js/**", "/resources/**", "/images/**").permitAll()
 				.requestMatchers("/user/save").permitAll()
-				.requestMatchers("/error**").permitAll()
+				// 해당 request에서는 "USER" 역할을 가진 유저에게만 허용한다.
+				.requestMatchers("/certi").hasAuthority("USER")
+				.requestMatchers("/certi/**").hasAuthority("USER")
+				.requestMatchers("/certification").hasAuthority("USER")
 			).formLogin((form) -> form
 					.loginPage("/loginForm")
 					.loginProcessingUrl("/login")
 					// 이건 왜 안 될까 ?
 					//.defaultSuccessUrl("/")
 					.defaultSuccessUrl("/", true)
+					// loginForm.html의 name의 값과 동일한 명으로 지정해야 함. ( default : username , password )
 					.usernameParameter("email")
 					.passwordParameter("pw")
 					)

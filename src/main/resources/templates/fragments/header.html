@@ -31,13 +31,17 @@
 		              <a class="nav-link" href="#"><img src="images/search-icon.png"></a>
 		            </li>-->
 		            <li class="nav-item">
-		            	<a class="nav-link" sec:authorize="isAnonymous()" href="/login"> 로그인</a>
+		            	<a class="nav-link" sec:authorize="isAnonymous()" href="/login">로그인</a>
 		            </li>
 		            <li class="nav-item">
-		            	<a class="nav-link" sec:authorize="isAuthenticated()" href="/mypage"> 마이 페이지</a>
+		            	<a class="nav-link" sec:authorize="isAuthenticated()" href="/mypage">마이 페이지</a>
 		            </li>
-			            
-
+		            <li>
+		            	<a class="nav-link" sec:authorize="isAuthenticated()" href="/certi">인증하기</a>
+		            </li>
+			        <li class="nav-item">
+		            	<a class="nav-link" sec:authorize="isAuthenticated()" href="/logout">로그아웃</a>
+		            </li>    
 		        </div>
 		    </nav>
 		</div>
