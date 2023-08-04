@@ -7,10 +7,17 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.NoSuchElementException;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -48,6 +55,14 @@ public class CertificationService {
 	private String serviceId;
 	@Value("${sendPhone}")
 	private String sendPhone;
+	@Value("${spring.mail.username}")
+	private String mailuser;
+	@Value("${spring.mail.password}")
+	private String mailpw;
+	@Value("${spring.mail.port}")
+	private String port;
+	@Value("${spring.mail.host}")
+	private String host;
 	
 	private String url = "https://sens.apigw.ntruss.com/sms/v2/services/";
 	
@@ -56,8 +71,57 @@ public class CertificationService {
 		this.memberRepo = memberRepo;
 	}
 
+	public void reqCertiEmail(String email, String code) {
+		
+		Properties props = System.getProperties();
+		
+		props.put("mail.transport.protocol", "smtp");
+		props.put("mail.stmp.protocol", 25);
+		props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.auth", "true");
+		
+		Session session = Session.getDefaultInstance(props);
+		
+		MimeMessage msg = new MimeMessage(session);
+		
+		Transport transport;
+		try {
+			transport = session.getTransport();
+		
+			msg.setFrom(new InternetAddress(mailuser, "CnDInfo"));
+			msg.setContent(makeBodyEmail(code), "text/html;charset=UTF-8");
+			msg.setSubject("[ CnDInfo ] 인증 코드 메일");
+			
+			transport.connect(host, mailuser, mailpw);
+			
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			
+			msg.setRecipients(Message.RecipientType.TO, String.valueOf(auth.getPrincipal()));
+			
+			smsRedisRepo.opsForValue().set(String.valueOf(auth.getPrincipal()), code);
+			
+			transport.sendMessage(msg, msg.getRecipients(Message.RecipientType.TO));
+		} catch (MessagingException e) {
+			logger.error(e.getMessage());
+		} catch (UnsupportedEncodingException e) {
+			logger.error(e.getMessage());
+		}
+		
+	}
 	
-	public void reqCerti(String email, String code) throws JsonProcessingException, InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException {
+	public String makeBodyEmail(String code) {
+		
+		String body = "";
+
+		body += "<p>";
+		body += "인증 번호 [ " + code + " ] 를 입력하세요.";
+		body += "</p>";
+		body += "\n";
+		
+		return body;
+	}
+	
+	public void reqCertiSMS(String email, String code) throws JsonProcessingException, InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException {
 		
 			String localTime = Long.toString(System.currentTimeMillis());
 			
@@ -71,7 +135,7 @@ public class CertificationService {
 		        
 		        saveCertifiactionNumber(email, code);
 				
-				String body = makeBody(code);
+				String body = makeBodySMS(code);
 				
 				HttpEntity<String> entity = new HttpEntity<>(body, headers);
 				
@@ -126,7 +190,7 @@ public class CertificationService {
 		return encodeBase64String;
 	}
 	
-	private String makeBody(String code) throws JsonProcessingException {
+	private String makeBodySMS(String code) throws JsonProcessingException {
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		
@@ -137,7 +201,9 @@ public class CertificationService {
         JSONObject toJson = new JSONObject();
         JSONArray toArr = new JSONArray();
         
-        toJson.put("to" , toPhone);
+        // test용
+//        toJson.put("to", sendPhones);
+        toJson.put("to", toPhone);
         toArr.put(toJson);
 
         bodytJson.put("type" , "SMS");
