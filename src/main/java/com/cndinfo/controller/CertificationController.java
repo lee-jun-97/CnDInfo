@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.cndinfo.domain.Alert;
@@ -29,8 +30,8 @@ public class CertificationController {
 		this.certiService = certiService;
 	}
 	
-	@GetMapping("/certi")
-	public String certi(Model model) {
+	@GetMapping("/certi/{mode}")
+	public String certi(@PathVariable String mode, Model model) {
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
@@ -43,8 +44,8 @@ public class CertificationController {
         	msg = "이미 인증이 완료되었습니다.";
         	url = "/";
         } else {
-        	msg = "SMS 인증을 진행하겠습니다.";
-        	url = "/certi/req";
+        	msg = mode.concat(" 인증을 진행하겠습니다.");
+        	url = "/certi/req".concat("/").concat(mode);
         }
         
         model.addAttribute("params", new Alert(msg, url));
@@ -53,13 +54,19 @@ public class CertificationController {
 	}
 	
 	// Service Layer에서 Redis에 난수(code) 와 email 저장.
-	@GetMapping("/certi/req")
-	public String reqCerti(Model model) throws JsonProcessingException {
+	@GetMapping("/certi/req/{mode}")
+	public String reqCerti(@PathVariable String mode, Model model) throws JsonProcessingException {
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         
 		try {
-			certiService.reqCerti(String.valueOf(auth.getPrincipal()), String.valueOf((int)(Math.random() * 899999) + 100000));
+			if(mode.equals("email")) {
+				logger.info("{} Email 인증 시작", auth.getPrincipal());
+				certiService.reqCertiEmail(String.valueOf(auth.getPrincipal()), String.valueOf((int)(Math.random() * 899999) + 100000));
+			} else if(mode.equals("SMS")) {
+				logger.info("{} SMS 인증 시작", auth.getPrincipal());
+				certiService.reqCertiSMS(String.valueOf(auth.getPrincipal()), String.valueOf((int)(Math.random() * 899999) + 100000));
+			}
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

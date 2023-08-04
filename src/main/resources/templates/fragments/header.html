@@ -37,7 +37,13 @@
 		            	<a class="nav-link" sec:authorize="isAuthenticated()" href="/mypage">마이 페이지</a>
 		            </li>
 		            <li>
-		            	<a class="nav-link" sec:authorize="isAuthenticated()" href="/certi">인증하기</a>
+		            	<div class="dropdown nav-link" sec:authorize="isAuthenticated()" >
+  							<button>인증하기</button>
+							<div class="dropdown-options">
+							    <a href="/certi/SMS">SMS</a>
+							    <a href="/certi/email">Email</a>
+							</div>
+						</div>
 		            </li>
 			        <li class="nav-item">
 		            	<a class="nav-link" sec:authorize="isAuthenticated()" href="/logout">로그아웃</a>
