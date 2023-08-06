@@ -26,9 +26,7 @@ public class WebSecurityConfig {
 				.requestMatchers("/", "/join", "/loginForm", "/about").permitAll()
 				.requestMatchers("/css/**", "/js/**", "/resources/**", "/images/**").permitAll()
 				.requestMatchers("/user/save").permitAll()
-				.requestMatchers("/mypage").permitAll()
 				// 해당 request에서는 "USER" 역할을 가진 유저에게만 허용한다.
-				.requestMatchers("/user/modify").hasAuthority("USER")
 				.requestMatchers("/certi").hasAuthority("USER")
 				.requestMatchers("/certi/**").hasAuthority("USER")
 				.requestMatchers("/certification").hasAuthority("USER")

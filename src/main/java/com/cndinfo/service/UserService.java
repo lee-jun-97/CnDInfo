@@ -26,13 +26,5 @@ public class UserService {
 			throw new SQLDataException();
 		}
 	}
-	
-	public Optional<User> findUserOne(String email) {
-		return userRepo.findByEmail(email);
-	}
-	
-	public void userUpdate(String email, String pw, String telecom, String phone) {
-		userRepo.updateUser(email, pw, telecom, phone);
-	}
 
 }

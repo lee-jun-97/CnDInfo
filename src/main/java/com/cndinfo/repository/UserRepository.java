@@ -19,9 +19,4 @@ public interface UserRepository extends JpaRepository<User, Long>{
 	@Modifying(clearAutomatically = true)
 	@Query("UPDATE User u SET u.iscerti = :certi WHERE u.email = :email")
 	int updateIsCerti(@Param("email")String email, @Param("certi")String certi);
-	
-	@Transactional
-	@Modifying(clearAutomatically = true)
-	@Query("UPDATE User u SET u.pw = :pw, u.telecom = :telecom, u.phone = :phone WHERE u.email = :email")
-	int updateUser(@Param("email") String email, @Param("pw") String pw, @Param("telecom") String telecom, @Param("phone") String phone);
 }
