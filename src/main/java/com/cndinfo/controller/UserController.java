@@ -54,12 +54,30 @@ public class UserController {
 		return "common/alert.html";
 	}
 	
+	@PostMapping("/user/checkpw")
+	public String checkpw(String pw, Model model) {
+		
+		String msg = "";
+		String url = "";
+		
+		if(matchesPw(pw, userService.findUserOne(getEmail()).get().getPw())) {
+			msg = "마이 페이지로 이동하겠습니다.";
+			url = "/mypage";
+		} else {
+			msg = "비밀번호가 일치하지 않습니다.";
+			url = "/checkpw";
+		}
+		
+		model.addAttribute("params", new Alert(msg, url));
+		
+		return "common/alert";
+	}
+	
+	
 	@GetMapping("/mypage")
 	public String myPage(Model model) {
 		
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		
-		Optional<User> user = userService.findUserOne(String.valueOf(auth.getPrincipal()));
+		Optional<User> user = userService.findUserOne(getEmail());
 		
 		model.addAttribute("user", user.get());
 		
@@ -74,7 +92,7 @@ public class UserController {
 		String msg = "";
 		String url = "";
 		
-		if(encoder.matches(pw, user.get().getPw())) {
+		if(matchesPw(pw, user.get().getPw())) {
 			if(user.get().getTelecom().equals(telecom) && user.get().getPhone().equals(phone)) {
 				msg = "변경 사항이 없습니다.";
 				url = "/mypage";
@@ -83,7 +101,7 @@ public class UserController {
 				url = "/mypage";
 			}
 		} else {
-			userService.userUpdate(email, pw, telecom, phone);
+			userService.userUpdate(email, encoder.encode(pw), telecom, phone);
 			logger.info("{} 회원 정보 수정 완료", email);
 			msg = "수정이 완료되었습니다.";
 			url = "/";
@@ -92,5 +110,17 @@ public class UserController {
 		model.addAttribute("params", new Alert(msg, url));
 		
 		return "common/alert";
+	}
+	
+	public boolean matchesPw(String inputPw, String dbPw) {
+		return encoder.matches(inputPw, dbPw);
+	}
+	
+	public String getEmail() {
+		return String.valueOf(getAuthentication().getPrincipal());
+	}
+	
+	public Authentication getAuthentication() {
+		return SecurityContextHolder.getContext().getAuthentication();
 	}
 }
