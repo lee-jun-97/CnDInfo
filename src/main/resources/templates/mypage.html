@@ -44,11 +44,11 @@
                     <div class="contact_main">
                         <div class="mail_section">
                         	<form th:action="@{/user/modify}" th:method="POST">
-	                        	<input class="mail_text" placeholder="Name" name="name" th:value="${user.name}" readonly>
-	                            <input class="mail_text" placeholder="Email" name="email" th:value="${user.email}" readonly>
-	                            <input type="password" class="mail_text" placeholder="Password" name="pw">
-	                            <input class="mail_text" placeholder="telecom" name="telecom">
-	                            <input class="mail_text" placeholder="phone" name="phone">
+	                        	<input class="mail_text" name="name" th:value="${user.name}" readonly>
+	                            <input class="mail_text" name="email" th:value="${user.email}" readonly>
+	                            <input type="password" class="mail_text" placeholder="변경할 비밀번호" name="pw">
+	                            <input class="mail_text" placeholder="telecom" name="telecom" th:value="${user.telecom}">
+	                            <input class="mail_text" placeholder="phone" name="phone" th:value="${user.phone}">
 	                            <button class="mail_text">수정</button>
                             </form>
                         	<a data-th-href="@{/}"><button class="mail_text" >홈으로</button></a>
