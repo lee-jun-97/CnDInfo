@@ -37,9 +37,9 @@
 		            	<a class="nav-link" sec:authorize="isAuthenticated()" href="/checkpw">마이 페이지</a>
 		            </li>
 		            <li>
-		            	<div class="dropdown nav-link" sec:authorize="isAuthenticated()" >
-  							<button>인증하기</button>
-							<div class="dropdown-options">
+		            	<div class="dropdown" sec:authorize="isAuthenticated()" >
+  							<span class="dropbtn">인증하기</span>
+							<div class="dropdown-contents">
 							    <a href="/certi/SMS">SMS</a>
 							    <a href="/certi/email">Email</a>
 							</div>

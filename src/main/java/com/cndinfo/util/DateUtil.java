@@ -8,12 +8,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class DateUtil {
 	
-	// Make Date
+	/* 현재 시간 'yyyy-MM-dd' 형태로 반환함. */
 	public String createDate() {
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		
-		return sdf.format(new Date());
+		return new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 	}
 
 }
