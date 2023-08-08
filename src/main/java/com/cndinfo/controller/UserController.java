@@ -5,8 +5,6 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +15,7 @@ import com.cndinfo.domain.Alert;
 import com.cndinfo.domain.User;
 import com.cndinfo.service.UserService;
 import com.cndinfo.util.DateUtil;
+import com.cndinfo.util.SecurityUtil;
 
 @Controller
 public class UserController {
@@ -26,11 +25,13 @@ public class UserController {
 	private UserService userService;
 	private DateUtil dateUtil;
 	private BCryptPasswordEncoder encoder;
+	private SecurityUtil securityUtil;
 	
 	
-	public UserController(UserService userService, DateUtil dateUtil, BCryptPasswordEncoder encoder) {
+	public UserController(UserService userService, DateUtil dateUtil, SecurityUtil securityUtil, BCryptPasswordEncoder encoder) {
 		this.userService = userService;
 		this.dateUtil = dateUtil;
+		this.securityUtil = securityUtil;
 		this.encoder = encoder;
 	}
 	
@@ -39,7 +40,7 @@ public class UserController {
 		String msg = "";
 		String url = "";
 		try {
-			userService.userSave(new User(name, email, encoder.encode(pw), telecom, phone, dateUtil.createDate(), null, "USER"));
+			userService.userSave(new User(name, email, convertPw(pw), telecom, phone, dateUtil.createDate(), null, "USER"));
 			logger.info("{} 회원 정보 저장 완료", name);
 			msg = "회원 가입이 완료되었습니다.";
 			url = "/";
@@ -60,7 +61,7 @@ public class UserController {
 		String msg = "";
 		String url = "";
 		
-		if(matchesPw(pw, userService.findUserOne(getEmail()).get().getPw())) {
+		if(matchesPw(pw, userService.findUser(securityUtil.getEmail()).get().getPw())) {
 			msg = "마이 페이지로 이동하겠습니다.";
 			url = "/mypage";
 		} else {
@@ -77,7 +78,7 @@ public class UserController {
 	@GetMapping("/mypage")
 	public String myPage(Model model) {
 		
-		Optional<User> user = userService.findUserOne(getEmail());
+		Optional<User> user = userService.findUser(securityUtil.getEmail());
 		
 		model.addAttribute("user", user.get());
 		
@@ -87,7 +88,7 @@ public class UserController {
 	@PostMapping("/user/modify")
 	public String userModify(String name, String email, String pw, String telecom, String phone, Model model) {
 		
-		Optional<User> user = userService.findUserOne(email);
+		Optional<User> user = userService.findUser(email);
 		
 		String msg = "";
 		String url = "";
@@ -101,7 +102,7 @@ public class UserController {
 				url = "/mypage";
 			}
 		} else {
-			userService.userUpdate(email, encoder.encode(pw), telecom, phone);
+			userService.userUpdate(email, convertPw(pw), telecom, phone);
 			logger.info("{} 회원 정보 수정 완료", email);
 			msg = "수정이 완료되었습니다.";
 			url = "/";
@@ -116,11 +117,8 @@ public class UserController {
 		return encoder.matches(inputPw, dbPw);
 	}
 	
-	public String getEmail() {
-		return String.valueOf(getAuthentication().getPrincipal());
+	private String convertPw(String pw) {
+		return encoder.encode(pw);
 	}
 	
-	public Authentication getAuthentication() {
-		return SecurityContextHolder.getContext().getAuthentication();
-	}
 }

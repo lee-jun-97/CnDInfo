@@ -27,7 +27,7 @@ public class UserService {
 		}
 	}
 	
-	public Optional<User> findUserOne(String email) {
+	public Optional<User> findUser(String email) {
 		return userRepo.findByEmail(email);
 	}
 	

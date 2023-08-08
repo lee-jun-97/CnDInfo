@@ -28,14 +28,13 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.cndinfo.dto.SmsResponseDTO;
 import com.cndinfo.repository.UserRepository;
+import com.cndinfo.util.SecurityUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 @Service
@@ -45,8 +44,12 @@ public class CertificationService {
 	
 	private RedisTemplate<String, String> smsRedisRepo;
 	private UserRepository memberRepo;
+	private SecurityUtil securityUtil;
 	
-	// static 달려 있으면 applications.properties 에서 값 못 받아옴.
+	/* 
+	 * application.properties 에서 @Value에 선언되어 있는 Key 값으로 값을 가져옴.
+	 *  ※ static 달려 있으면 applications.properties 에서 값 못 받아옴 !!
+	 * */
 	@Value("${accesskey}")
 	private String accessKey;
 	@Value("${secretkey}")
@@ -63,22 +66,26 @@ public class CertificationService {
 	private String port;
 	@Value("${spring.mail.host}")
 	private String host;
+	@Value("${naver.api.url}")
+	private String url;
 	
-	private String url = "https://sens.apigw.ntruss.com/sms/v2/services/";
 	
-	public CertificationService(RedisTemplate<String, String> redisTemplate, UserRepository memberRepo) {
+	public CertificationService(RedisTemplate<String, String> redisTemplate, UserRepository memberRepo, SecurityUtil securityUtil) {
 		this.smsRedisRepo = redisTemplate;
 		this.memberRepo = memberRepo;
+		this.securityUtil = securityUtil;
 	}
 
 	public void reqCertiEmail(String email, String code) {
+		
+//		logger.info("code : {}", code);
 		
 		Properties props = System.getProperties();
 		
 		props.put("mail.transport.protocol", "smtp");
 		props.put("mail.stmp.protocol", 25);
 		props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.auth", "true");
 		
 		Session session = Session.getDefaultInstance(props);
 		
@@ -94,11 +101,9 @@ public class CertificationService {
 			
 			transport.connect(host, mailuser, mailpw);
 			
-			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			msg.setRecipients(Message.RecipientType.TO, securityUtil.getEmail());
 			
-			msg.setRecipients(Message.RecipientType.TO, String.valueOf(auth.getPrincipal()));
-			
-			smsRedisRepo.opsForValue().set(String.valueOf(auth.getPrincipal()), code);
+			smsRedisRepo.opsForValue().set(securityUtil.getEmail(), code);
 			
 			transport.sendMessage(msg, msg.getRecipients(Message.RecipientType.TO));
 		} catch (MessagingException e) {
@@ -123,34 +128,36 @@ public class CertificationService {
 	
 	public void reqCertiSMS(String email, String code) throws JsonProcessingException, InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException {
 		
-			String localTime = Long.toString(System.currentTimeMillis());
+//		logger.info("code : {}", code);
+		
+		String localTime = Long.toString(System.currentTimeMillis());
+		
+		try {
+			HttpHeaders headers = new HttpHeaders();
 			
-			try {
-				HttpHeaders headers = new HttpHeaders();
-				
-				headers.set("Content-Type", "application/json; charset=utf-8");
-				headers.set("x-ncp-apigw-timestamp", localTime);
-				headers.set("x-ncp-iam-access-key", accessKey);
-				headers.set("x-ncp-apigw-signature-v2", makeSignature(localTime, accessKey, secretKey));
-		        
-		        saveCertifiactionNumber(email, code);
-				
-				String body = makeBodySMS(code);
-				
-				HttpEntity<String> entity = new HttpEntity<>(body, headers);
-				
-				RestTemplate restTemplate = new RestTemplate();
-			    restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
-			    SmsResponseDTO response = restTemplate.postForObject(new URI(url.concat(serviceId).concat("/messages")), entity, SmsResponseDTO.class);
-			    
-			    logger.info("Response Status Code : {}", response.getStatusCode());
-			    logger.info("Response Status Name : {}", response.getStatusName());
-			    
-			} catch (RestClientException e) {
-				logger.error(e.getMessage());
-			} catch (URISyntaxException e) {
-				logger.error(e.getMessage());
-			}
+			headers.set("Content-Type", "application/json; charset=utf-8");
+			headers.set("x-ncp-apigw-timestamp", localTime);
+			headers.set("x-ncp-iam-access-key", accessKey);
+			headers.set("x-ncp-apigw-signature-v2", makeSignature(localTime, accessKey, secretKey));
+	        
+	        saveCertifiactionNumber(email, code);
+			
+			String body = makeBodySMS(code);
+			
+			HttpEntity<String> entity = new HttpEntity<>(body, headers);
+			
+			RestTemplate restTemplate = new RestTemplate();
+		    restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+		    SmsResponseDTO response = restTemplate.postForObject(new URI(url.concat(serviceId).concat("/messages")), entity, SmsResponseDTO.class);
+		    
+		    logger.info("Response Status Code : {}", response.getStatusCode());
+		    logger.info("Response Status Name : {}", response.getStatusName());
+		    
+		} catch (RestClientException e) {
+			logger.error(e.getMessage());
+		} catch (URISyntaxException e) {
+			logger.error(e.getMessage());
+		}
 			
 	}
 	
@@ -192,17 +199,15 @@ public class CertificationService {
 	
 	private String makeBodySMS(String code) throws JsonProcessingException {
 		
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		
 		// 추후 해당 유저 번호 가져와서 SMS 보내도록 
-		String toPhone = memberRepo.findByEmail(String.valueOf(auth.getPrincipal())).get().getPhone();
+		String toPhone = memberRepo.findByEmail(securityUtil.getEmail()).get().getPhone();
 		
 		JSONObject bodytJson = new JSONObject();
         JSONObject toJson = new JSONObject();
         JSONArray toArr = new JSONArray();
         
         // test용
-//        toJson.put("to", sendPhones);
+//        toJson.put("to", sendPhone);
         toJson.put("to", toPhone);
         toArr.put(toJson);
 
