@@ -101,9 +101,9 @@ public class CertificationService {
 			
 			transport.connect(host, mailuser, mailpw);
 			
-			msg.setRecipients(Message.RecipientType.TO, securityUtil.getEmail());
+			msg.setRecipients(Message.RecipientType.TO, email);
 			
-			smsRedisRepo.opsForValue().set(securityUtil.getEmail(), code);
+			saveCertifiactionNumber(email, code);
 			
 			transport.sendMessage(msg, msg.getRecipients(Message.RecipientType.TO));
 		} catch (MessagingException e) {
