@@ -28,6 +28,8 @@ public class WebSecurityConfig {
 				.requestMatchers("/user/save").permitAll()
 				// 해당 request에서는 "USER" 역할을 가진 유저에게만 허용한다.
 				.requestMatchers("/certi", "/certi/**", "/certification", "/user/modify").hasAuthority("USER")
+				// membership 페이지 접근은 USER 권한을 가진 유저에게만 허용한다.
+				.requestMatchers("/memebership/**").hasAuthority("USER")
 				// ADMIN, UER 역할일 경우에만 접속가능하도록 설정. 역할이 부여되지 않았을 때에는 접속 하지 못하도록 하기 위해서 permitAll() 설정은 하지 않았음. 
 				.requestMatchers("/mypage", "/checkpw", "/user/checkpw").hasAnyAuthority("ADMIN", "USER")
 			).formLogin((form) -> form
