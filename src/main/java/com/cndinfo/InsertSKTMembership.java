@@ -43,9 +43,12 @@ public class InsertSKTMembership {
 			// MySQL Drvier 지정
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			// ex) jdbc:mysql://localhost:3306/${database}?characterEncoding=UTF-8
-			String url = "${DB Url}";
-			String user = "${DB username}";
-			String pw = "${DB password}";
+//			String url = "${DB Url}";
+			String url = "jdbc:mysql://localhost:3306/cndinfo?characterEncoding=UTF-8";
+//			String user = "${DB username}";
+			String user = "study";
+//			String pw = "${DB password}";
+			String pw = "study";
 			
 			Connection conn = DriverManager.getConnection(url, user, pw);
 			
@@ -57,13 +60,11 @@ public class InsertSKTMembership {
 					if(input.startsWith("http")) {
 						
 						for(Node i : parseHtml(input)) {
-							System.out.println(category_id + " " + category_name + " " + i.brand_id + " " + i.brand_name);
-							
 							String sql = "INSERT INTO membership_brands(category_id, category_name, brand_id, brand_name, telecom)";
 							
 							Statement stmt = conn.createStatement();
 							
-							stmt.execute(sql.concat(" VALUES ('").concat(category_id).concat("', '").concat(category_name).concat("', '").concat(i.brand_id).concat("', '").concat(i.brand_name).concat("', '").concat(telecom).concat(")"));
+							stmt.execute(sql.concat(" VALUES ('").concat(category_id).concat("', '").concat(category_name).concat("', '").concat(i.brand_id).concat("', '").concat(i.brand_name).concat("', '").concat(telecom).concat("')"));
 							
 							if(stmt != null) {
 								stmt.close();
