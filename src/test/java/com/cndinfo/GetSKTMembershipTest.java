@@ -1,4 +1,4 @@
-package com.cndinfo.service;
+package com.cndinfo;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.annotation.Testable;
 
 @Testable
-public class MembershipServiceTest {
+public class GetSKTMembershipTest {
 	
 //	@Test
 	public void sktTest() throws IOException {

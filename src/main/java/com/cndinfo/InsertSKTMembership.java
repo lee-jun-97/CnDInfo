@@ -57,13 +57,11 @@ public class InsertSKTMembership {
 					if(input.startsWith("http")) {
 						
 						for(Node i : parseHtml(input)) {
-							System.out.println(category_id + " " + category_name + " " + i.brand_id + " " + i.brand_name);
-							
 							String sql = "INSERT INTO membership_brands(category_id, category_name, brand_id, brand_name, telecom)";
 							
 							Statement stmt = conn.createStatement();
 							
-							stmt.execute(sql.concat(" VALUES ('").concat(category_id).concat("', '").concat(category_name).concat("', '").concat(i.brand_id).concat("', '").concat(i.brand_name).concat("', '").concat(telecom).concat(")"));
+							stmt.execute(sql.concat(" VALUES ('").concat(category_id).concat("', '").concat(category_name).concat("', '").concat(i.brand_id).concat("', '").concat(i.brand_name).concat("', '").concat(telecom).concat("')"));
 							
 							if(stmt != null) {
 								stmt.close();
@@ -116,9 +114,9 @@ public class InsertSKTMembership {
 				if(temp[i].charAt(end_idx) == '\"') {
 					brand_id = temp[i].substring(start_idx, end_idx);
 					if(temp[i].substring(end_idx + 2).contains("data-selected")) {
-						brand_name = temp[i].replaceAll("data-selected", "").substring(end_idx + 6).replaceAll("<a>", "").replaceAll("</a>", "").replaceAll("</li>","").trim();
+						brand_name = temp[i].replaceAll("data-selected", "").substring(end_idx + 6).replaceAll("<a>", "").replaceAll("</a>", "").replaceAll("</li>","").trim().replaceAll("&amp;", "&");
 					} else {
-						brand_name = temp[i].substring(end_idx + 2).replaceAll("<a>", "").replaceAll("</a>", "").replaceAll("</li>","").trim();
+						brand_name = temp[i].substring(end_idx + 2).replaceAll("<a>", "").replaceAll("</a>", "").replaceAll("</li>","").trim().replaceAll("&amp;", "&");
 					}
 					
 					brand_list.add(new Node(brand_id, brand_name));
