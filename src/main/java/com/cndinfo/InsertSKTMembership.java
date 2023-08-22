@@ -43,12 +43,9 @@ public class InsertSKTMembership {
 			// MySQL Drvier 지정
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			// ex) jdbc:mysql://localhost:3306/${database}?characterEncoding=UTF-8
-//			String url = "${DB Url}";
-			String url = "jdbc:mysql://localhost:3306/cndinfo?characterEncoding=UTF-8";
-//			String user = "${DB username}";
-			String user = "study";
-//			String pw = "${DB password}";
-			String pw = "study";
+			String url = "${DB Url}";
+			String user = "${DB username}";
+			String pw = "${DB password}";
 			
 			Connection conn = DriverManager.getConnection(url, user, pw);
 			
@@ -117,9 +114,9 @@ public class InsertSKTMembership {
 				if(temp[i].charAt(end_idx) == '\"') {
 					brand_id = temp[i].substring(start_idx, end_idx);
 					if(temp[i].substring(end_idx + 2).contains("data-selected")) {
-						brand_name = temp[i].replaceAll("data-selected", "").substring(end_idx + 6).replaceAll("<a>", "").replaceAll("</a>", "").replaceAll("</li>","").trim();
+						brand_name = temp[i].replaceAll("data-selected", "").substring(end_idx + 6).replaceAll("<a>", "").replaceAll("</a>", "").replaceAll("</li>","").trim().replaceAll("&amp;", "&");
 					} else {
-						brand_name = temp[i].substring(end_idx + 2).replaceAll("<a>", "").replaceAll("</a>", "").replaceAll("</li>","").trim();
+						brand_name = temp[i].substring(end_idx + 2).replaceAll("<a>", "").replaceAll("</a>", "").replaceAll("</li>","").trim().replaceAll("&amp;", "&");
 					}
 					
 					brand_list.add(new Node(brand_id, brand_name));

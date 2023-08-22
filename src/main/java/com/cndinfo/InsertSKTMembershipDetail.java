@@ -20,9 +20,9 @@ public class InsertSKTMembershipDetail {
 			// MySQL Drvier 지정
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			// ex) jdbc:mysql://localhost:3306/${database}?characterEncoding=UTF-8
-			String url = "${DB Url}";
+			String url = "${DB url}";
 			String user = "${DB username}";
-			String pw = "${DB pw}";
+			String pw = "${DB password}";
 			
 			Connection conn = DriverManager.getConnection(url, user, pw);
 			
