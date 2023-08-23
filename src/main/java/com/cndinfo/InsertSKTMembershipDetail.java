@@ -11,6 +11,7 @@ import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+// SKT 멤버십 상세 혜택 Save
 public class InsertSKTMembershipDetail {
 	
 	public static void main(String[] args) {
@@ -20,7 +21,7 @@ public class InsertSKTMembershipDetail {
 			// MySQL Drvier 지정
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			// ex) jdbc:mysql://localhost:3306/${database}?characterEncoding=UTF-8
-			String url = "${DB url}";
+			String url = "${DB Url}";
 			String user = "${DB username}";
 			String pw = "${DB password}";
 			
@@ -43,7 +44,6 @@ public class InsertSKTMembershipDetail {
 			for(List<String> i : list) {
 				result += i.size();
 				for(String j : i) {
-					System.out.println(j);
 					stmt.execute(j);
 				}
 			}

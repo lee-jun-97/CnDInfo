@@ -8,6 +8,25 @@
 	<div th:replace="~{fragments/header :: header}"></div>
 	<!--header section end -->
 	
+	<!-- table section start -->
+	<table bolder="20px" align="center">
+		<thead>
+			<tr colspan="50px">
+			<th >카테고리</th>
+			<th>브랜드</th>
+			<th>상세 혜택</th>
+			</tr>
+		</thead>
+	
+		<tbody>
+			<tr colspan="50px" th:each="vo : ${membership}" >
+				<td><span th:text="${vo.categoryName}"></span></td>
+				<td><span th:text="${vo.brandName}"></span></td>
+			</tr>
+		</tbody>
+	</table>
+	<!-- table section end -->
+	
 	<!--footer section start -->
 	<div th:replace="~{fragments/footer :: footer}"></div>
 	<!--footer section end -->

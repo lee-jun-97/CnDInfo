@@ -15,6 +15,7 @@ import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// SKT 멤버십 혜택 브랜드 목록 Save
 public class InsertSKTMembership {
 	
 	static String category_id;

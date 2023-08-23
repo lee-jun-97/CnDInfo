@@ -2,6 +2,7 @@ package com.cndinfo.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.cndinfo.domain.Membership;
@@ -27,6 +28,10 @@ public class MembershipService {
 	
 	public String getTelecom() {
 		return userRepo.findByEmail(securityUtil.getEmail()).get().getTelecom();
+	}
+	
+	public List<Membership> getMembership(String telecom, Pageable pageable) {
+		return membershipRepo.findByTelecom(telecom, pageable).getContent();
 	}
 	
 	public List<Membership> getMembership(String telecom) {
